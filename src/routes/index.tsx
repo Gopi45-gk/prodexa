@@ -1,29 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Toaster } from "sonner";
+import { Splash } from "@/components/Splash";
+import { Login } from "@/components/Login";
+import { Dashboard } from "@/components/Dashboard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "TaskForge — Smart Task Manager" },
+      { name: "description", content: "Organize, prioritize, and achieve with a futuristic task manager built for focused work." },
+      { property: "og:title", content: "TaskForge — Smart Task Manager" },
+      { property: "og:description", content: "Organize, prioritize, and achieve with a futuristic task manager built for focused work." },
     ],
   }),
-  component: Index,
+  component: App,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+type Stage = "splash" | "login" | "dashboard";
+
+function App() {
+  const [stage, setStage] = useState<Stage>("splash");
+  const [user, setUser] = useState("alex");
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      {stage === "splash" && <Splash onDone={() => setStage("login")} />}
+      {stage === "login" && <Login onSuccess={(n) => { setUser(n); setStage("dashboard"); }} />}
+      {stage === "dashboard" && <Dashboard user={user} onLogout={() => setStage("login")} />}
+      <Toaster position="top-right" theme="dark" richColors />
+    </>
   );
 }
