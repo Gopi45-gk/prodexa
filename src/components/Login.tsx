@@ -1,20 +1,43 @@
 import { useState } from "react";
 import { CheckCircle2, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { auth, googleProvider } from "@/lib/firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { toast } from "sonner";
 
-export function Login({ onSuccess }: { onSuccess: (name: string) => void }) {
-  const [email, setEmail] = useState("alex@taskforge.io");
-  const [password, setPassword] = useState("••••••••");
+export function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please enter email and password");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      if (isSignUp) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        toast.success("Account created successfully!");
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+        toast.success("Signed in successfully!");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to authenticate");
       setLoading(false);
-      setSuccess(true);
-      setTimeout(() => onSuccess(email.split("@")[0] || "User"), 1100);
-    }, 900);
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      toast.success("Signed in with Google!");
+    } catch (error: any) {
+      toast.error(error.message || "Google sign in failed");
+    }
   };
 
   return (
@@ -97,26 +120,17 @@ export function Login({ onSuccess }: { onSuccess: (name: string) => void }) {
         {/* RIGHT — login card */}
         <div className="flex items-center justify-center p-6 lg:p-12">
           <div className="glass relative w-full max-w-md rounded-3xl p-8 md:p-10 shadow-elegant animate-fade-up">
-            {success && (
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-3xl glass">
-                <div className="h-20 w-20 rounded-full gradient-primary flex items-center justify-center shadow-glow animate-logo-in">
-                  <CheckCircle2 className="h-10 w-10 text-primary-foreground" strokeWidth={3} />
-                </div>
-                <div className="mt-4 font-display text-xl font-semibold">Login Successful</div>
-                <div className="text-sm text-muted-foreground mt-1">Welcome back</div>
-              </div>
-            )}
 
             <div className="flex items-center gap-3">
               <div className="h-11 w-11 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
                 <CheckCircle2 className="h-6 w-6 text-primary-foreground" />
               </div>
-              <div className="font-display font-bold text-lg">TaskForge</div>
+              <div className="font-display font-bold text-lg">PRODEXA</div>
             </div>
 
-            <h1 className="mt-8 font-display text-3xl md:text-4xl font-bold">Welcome back</h1>
+            <h1 className="mt-8 font-display text-3xl md:text-4xl font-bold">{isSignUp ? "Create account" : "Welcome back"}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to continue building your momentum.
+              {isSignUp ? "Sign up to start building your momentum." : "Sign in to continue building your momentum."}
             </p>
 
             <form onSubmit={submit} className="mt-8 space-y-4">
@@ -157,7 +171,7 @@ export function Login({ onSuccess }: { onSuccess: (name: string) => void }) {
                 className="group relative w-full overflow-hidden rounded-xl gradient-primary px-6 py-3.5 font-medium text-primary-foreground shadow-glow transition-all hover:scale-[1.02] disabled:opacity-70"
               >
                 <span className="relative z-10 inline-flex items-center justify-center gap-2">
-                  {loading ? "Signing in…" : "Sign in"}
+                  {loading ? "Please wait…" : (isSignUp ? "Sign up" : "Sign in")}
                   {!loading && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
                 </span>
               </button>
@@ -170,6 +184,7 @@ export function Login({ onSuccess }: { onSuccess: (name: string) => void }) {
 
               <button
                 type="button"
+                onClick={signInWithGoogle}
                 className="w-full rounded-xl border border-border bg-white/5 px-6 py-3.5 text-sm font-medium transition-all hover:bg-white/10 inline-flex items-center justify-center gap-3"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -182,7 +197,10 @@ export function Login({ onSuccess }: { onSuccess: (name: string) => void }) {
               </button>
 
               <p className="text-center text-sm text-muted-foreground pt-2">
-                New here? <button type="button" className="text-primary hover:underline">Create an account</button>
+                {isSignUp ? "Already have an account?" : "New here?"}{" "}
+                <button type="button" onClick={() => setIsSignUp(!isSignUp)} className="text-primary hover:underline">
+                  {isSignUp ? "Sign in" : "Create an account"}
+                </button>
               </p>
             </form>
           </div>

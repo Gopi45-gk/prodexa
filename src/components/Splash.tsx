@@ -55,7 +55,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
         </div>
 
         <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight animate-fade-up delay-300">
-          <span className="gradient-text">SMART TASK MANAGER</span>
+          <span className="gradient-text">PRODEXA</span>
         </h1>
         <p className="mt-4 text-muted-foreground tracking-[0.3em] text-sm md:text-base animate-fade-up delay-500">
           ORGANIZE • PRIORITIZE • ACHIEVE
