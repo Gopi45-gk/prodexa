@@ -1,3 +1,5 @@
+const API_KEY = import.meta.env.VITE_NVIDIA_API_KEY;
+
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
   content: string;
@@ -5,12 +7,18 @@ export interface ChatMessage {
 
 export const generateCompletion = async (messages: ChatMessage[]) => {
   try {
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/api/nv/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
       },
-      body: JSON.stringify({ messages })
+      body: JSON.stringify({ 
+        model: "deepseek-ai/deepseek-r1",
+        messages,
+        temperature: 0.7,
+        max_tokens: 1024
+      })
     });
 
     if (!response.ok) {
