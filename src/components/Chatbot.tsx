@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
 import { ChatMessage, generateChatResponse } from "@/lib/llm";
 import { useStore } from "@/contexts/StoreContext";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +47,7 @@ export function Chatbot() {
         <MessageCircle className="h-6 w-6" />
       </button>
 
-      <div className={`fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 w-[calc(100vw-2rem)] md:w-96 h-[500px] max-h-[75vh] bg-slate-900 rounded-2xl border border-white/10 shadow-2xl flex flex-col transition-all origin-bottom-right duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"}`}>
+      <div className={`fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 w-[calc(100vw-2rem)] md:w-[450px] h-[600px] max-h-[80vh] bg-[#0B1120]/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl flex flex-col transition-all origin-bottom-right duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"}`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/5 gradient-primary rounded-t-2xl">
           <div className="flex items-center gap-2 text-white">
@@ -58,33 +60,43 @@ export function Chatbot() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
           {messages.length === 0 && (
-            <div className="text-center text-muted-foreground text-sm mt-10">
-              <Bot className="h-10 w-10 mx-auto mb-3 opacity-50" />
+            <div className="text-center text-muted-foreground text-[15px] mt-10">
+              <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Hi! I'm your personal productivity coach.</p>
               <p>Ask me for advice, task prioritization, or motivation!</p>
             </div>
           )}
           
           {messages.map((m, i) => (
-            <div key={i} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-              <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${m.role === "user" ? "bg-accent/20 text-accent" : "gradient-primary text-white"}`}>
-                {m.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+            <div key={i} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+              <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center shadow-lg ${m.role === "user" ? "bg-accent/20 text-accent" : "gradient-primary text-white"}`}>
+                {m.role === "user" ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
               </div>
-              <div className={`p-3 rounded-2xl max-w-[75%] text-sm ${m.role === "user" ? "bg-accent/10 text-foreground rounded-tr-none" : "bg-white/5 border border-white/5 rounded-tl-none"}`}>
-                {m.content}
+              <div className={`p-4 rounded-2xl max-w-[85%] text-[15px] shadow-sm ${m.role === "user" ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-tr-none" : "bg-slate-800/80 border border-slate-700/50 rounded-tl-none text-slate-200"}`}>
+                {m.role === "user" ? (
+                  m.content
+                ) : (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-body">
+                    {m.content}
+                  </ReactMarkdown>
+                )}
               </div>
             </div>
           ))}
           {isLoading && (
-            <div className="flex gap-3">
-              <div className="flex-shrink-0 h-8 w-8 rounded-full gradient-primary text-white flex items-center justify-center">
-                <Bot className="h-4 w-4" />
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 h-10 w-10 rounded-full gradient-primary text-white flex items-center justify-center shadow-lg">
+                <Bot className="h-5 w-5" />
               </div>
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/5 rounded-tl-none flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                <span className="text-xs text-muted-foreground">Thinking...</span>
+              <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/50 rounded-tl-none flex items-center gap-3 shadow-sm">
+                <div className="flex space-x-1.5">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+                <span className="text-[15px] font-medium text-slate-300">PRODEXA AI is analyzing...</span>
               </div>
             </div>
           )}
@@ -110,6 +122,61 @@ export function Chatbot() {
           </form>
         </div>
       </div>
+
+      <style>{`
+        .markdown-body {
+          font-size: 15px;
+          line-height: 1.6;
+          color: #e2e8f0;
+        }
+        .markdown-body p {
+          margin-bottom: 0.75em;
+        }
+        .markdown-body p:last-child {
+          margin-bottom: 0;
+        }
+        .markdown-body ul, .markdown-body ol {
+          margin-bottom: 0.75em;
+          padding-left: 1.5em;
+        }
+        .markdown-body ul {
+          list-style-type: disc;
+        }
+        .markdown-body ol {
+          list-style-type: decimal;
+        }
+        .markdown-body li {
+          margin-bottom: 0.25em;
+        }
+        .markdown-body code {
+          background-color: rgba(0, 0, 0, 0.3);
+          padding: 0.2em 0.4em;
+          border-radius: 4px;
+          font-size: 0.9em;
+          font-family: monospace;
+        }
+        .markdown-body pre {
+          background-color: #020617;
+          padding: 1em;
+          border-radius: 8px;
+          overflow-x: auto;
+          margin-bottom: 0.75em;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        .markdown-body pre code {
+          background-color: transparent;
+          padding: 0;
+          font-size: 0.9em;
+        }
+        .markdown-body strong {
+          font-weight: 600;
+          color: white;
+        }
+        .markdown-body a {
+          color: #60a5fa;
+          text-decoration: underline;
+        }
+      `}</style>
     </>
   );
 }
