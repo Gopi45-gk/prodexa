@@ -23,7 +23,7 @@ Return a valid JSON object with EXACTLY these 3 keys:
 }
 No markdown formatting, just the raw JSON string.`;
 
-      const res = await generateCompletion([{ role: "user", content: prompt }]);
+      const res = await generateCompletion({ data: [{ role: "user", content: prompt }] });
       let cleanRes = res.replace(/```json/gi, "").replace(/```/g, "").trim();
       if (!cleanRes.startsWith("{")) {
         cleanRes = cleanRes.substring(cleanRes.indexOf("{"));
