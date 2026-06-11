@@ -1,7 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
+import OpenAI from "openai";
 
-const API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const API_KEY = process.env.VITE_NVIDIA_API_KEY || process.env.NVIDIA_API_KEY;
+
+const openai = new OpenAI({
+  baseURL: "https://integrate.api.nvidia.com/v1",
+  apiKey: API_KEY
+});
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -12,29 +17,14 @@ export const generateCompletion = createServerFn({ method: "POST" })
   .validator((messages: ChatMessage[]) => messages)
   .handler(async ({ data: messages }) => {
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "deepseek-ai/deepseek-r1",
-          messages,
-          temperature: 0.7,
-          max_tokens: 1024,
-          stream: false
-        })
+      const completion = await openai.chat.completions.create({
+        model: "deepseek-ai/deepseek-v4-pro",
+        messages: messages as any,
+        temperature: 0.7,
+        max_tokens: 1024,
       });
 
-      if (!response.ok) {
-        const errTxt = await response.text();
-        console.error("LLM Error:", errTxt);
-        throw new Error(`LLM Error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.choices[0].message.content as string;
+      return completion.choices[0].message.content as string;
     } catch (error) {
       console.error("Failed to generate completion:", error);
       throw error;
