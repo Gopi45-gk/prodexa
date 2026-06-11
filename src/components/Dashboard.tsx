@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard, ListChecks, Calendar, BarChart3,
-  Settings, Moon, Sun, User as UserIcon, Search, Bell, Target, BookOpen, Clock, BrainCircuit, Trophy, GraduationCap, Briefcase, LogOut, X
+  Settings, Moon, Sun, User as UserIcon, Search, Bell, Target, BookOpen, Clock, BrainCircuit, Trophy, GraduationCap, Briefcase, LogOut, X, Menu
 } from "lucide-react";
 import { toast } from "sonner";
 import { User as FirebaseUser } from "firebase/auth";
@@ -37,6 +37,7 @@ export function Dashboard({ user }: { user: FirebaseUser }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [modal, setModal] = useState<null | "Settings" | "Profile">(null);
   const [search, setSearch] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
 
   const userDisplayName = user.displayName || user.email?.split("@")[0] || "User";
@@ -71,6 +72,7 @@ export function Dashboard({ user }: { user: FirebaseUser }) {
 
   const handleNav = (label: View) => {
     setView(label);
+    setSidebarOpen(false);
     topRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -91,8 +93,13 @@ export function Dashboard({ user }: { user: FirebaseUser }) {
 
   return (
     <div ref={topRef} className="min-h-screen">
+      {/* Mobile Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+      
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-30 hidden lg:flex h-screen w-64 flex-col glass border-r">
+      <aside className={`fixed left-0 top-0 z-50 h-screen w-64 flex flex-col glass border-r border-white/10 transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
           <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
             <span className="text-primary-foreground font-bold">P</span>
@@ -139,6 +146,9 @@ export function Dashboard({ user }: { user: FirebaseUser }) {
         {/* Topbar */}
         <header className="sticky top-0 z-20 glass border-b backdrop-blur-xl">
           <div className="flex items-center gap-4 px-4 md:px-8 py-3">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-muted-foreground hover:text-foreground">
+              <Menu className="h-6 w-6" />
+            </button>
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input

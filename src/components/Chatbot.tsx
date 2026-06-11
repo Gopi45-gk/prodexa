@@ -40,12 +40,12 @@ export function Chatbot() {
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full gradient-primary shadow-glow flex items-center justify-center text-white transition-transform ${isOpen ? "scale-0" : "scale-100 hover:scale-110"}`}
+        className={`fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-40 h-14 w-14 rounded-full gradient-primary shadow-glow flex items-center justify-center text-white transition-transform ${isOpen ? "scale-0" : "scale-100 hover:scale-110"}`}
       >
         <MessageCircle className="h-6 w-6" />
       </button>
 
-      <div className={`fixed bottom-6 right-6 z-50 w-80 md:w-96 h-[500px] max-h-[80vh] glass rounded-2xl border border-white/10 shadow-elegant flex flex-col transition-all origin-bottom-right duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"}`}>
+      <div className={`fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 w-[calc(100vw-2rem)] md:w-96 h-[500px] max-h-[75vh] glass rounded-2xl border border-white/10 shadow-elegant flex flex-col transition-all origin-bottom-right duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"}`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/5 gradient-primary rounded-t-2xl">
           <div className="flex items-center gap-2 text-white">
