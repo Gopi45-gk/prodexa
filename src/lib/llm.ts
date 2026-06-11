@@ -40,10 +40,10 @@ ${JSON.stringify(contextData, null, 2)}
 
 Provide concise, highly actionable, and encouraging advice. If asked to prioritize, recommend specific tasks from their list. Do not hallucinate tasks. Keep responses professional but friendly.`;
 
-  return generateCompletion({ data: [
+  return generateCompletion([
     { role: "system", content: systemPrompt },
     { role: "user", content: userMessage }
-  ]});
+  ]);
 }
 
 export async function generateDailyReport(contextData: any) {
@@ -53,10 +53,10 @@ export async function generateDailyReport(contextData: any) {
 3. 2 actionable suggested improvements for tomorrow.
 Data: ${JSON.stringify(contextData)}`;
 
-  return generateCompletion({ data: [
+  return generateCompletion([
     { role: "system", content: "You are the PRODEXA AI Coach." },
     { role: "user", content: prompt }
-  ]});
+  ]);
 }
 
 export async function generateBurnoutAnalysis(contextData: any) {
@@ -66,10 +66,10 @@ ${JSON.stringify(contextData)}
 2. Provide 2-3 sentences of actionable advice to manage workload and improve well-being.
 Be empathetic but direct.`;
 
-  return generateCompletion({ data: [
+  return generateCompletion([
     { role: "system", content: "You are an empathetic productivity and well-being AI coach." },
     { role: "user", content: prompt }
-  ]});
+  ]);
 }
 
 export async function generateSmartPriority(taskTitle: string, taskDesc: string, dueDate: string) {
@@ -79,10 +79,10 @@ Task: ${taskTitle}
 Description: ${taskDesc}
 Due: ${dueDate}`;
 
-  const res = await generateCompletion({ data: [
+  const res = await generateCompletion([
     { role: "system", content: "You are a task triaging AI." },
     { role: "user", content: prompt }
-  ]});
+  ]);
   
   const text = res.trim().toLowerCase();
   if (text.includes("critical")) return "Critical";
@@ -99,10 +99,10 @@ Generate:
 2. Exam Preparation Strategy.
 3. Priority Recommendations for what to tackle first.`;
 
-  return generateCompletion({ data: [
+  return generateCompletion([
     { role: "system", content: "You are an expert academic advisor and student coach." },
     { role: "user", content: prompt }
-  ]});
+  ]);
 }
 
 export async function generateCareerRecommendations(contextData: any) {
@@ -113,10 +113,10 @@ Generate:
 2. Learning Roadmap.
 3. Resume Improvement Tips based on missing or present certifications.`;
 
-  return generateCompletion({ data: [
+  return generateCompletion([
     { role: "system", content: "You are an expert career counselor." },
     { role: "user", content: prompt }
-  ]});
+  ]);
 }
 
 export async function generateWeeklyReview(contextData: any) {
@@ -130,8 +130,8 @@ Include:
 5. Goal Progress.
 Keep it structured with markdown bullet points.`;
 
-  return generateCompletion({ data: [
+  return generateCompletion([
     { role: "system", content: "You are an analytical productivity coach." },
     { role: "user", content: prompt }
-  ]});
+  ]);
 }
