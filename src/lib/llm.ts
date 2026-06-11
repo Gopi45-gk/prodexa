@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
-const API_URL = "https://api.deepseek.com/chat/completions";
-const API_KEY = process.env.VITE_DEEPSEEK_API_KEY || process.env.DEEPSEEK_API_KEY;
+const API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
+const API_KEY = process.env.VITE_NVIDIA_API_KEY || process.env.NVIDIA_API_KEY;
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -19,7 +19,7 @@ export const generateCompletion = createServerFn({ method: "POST" })
           "Authorization": `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
-          model: "deepseek-chat",
+          model: "deepseek-ai/deepseek-r1",
           messages,
           temperature: 0.7,
           max_tokens: 1024,
