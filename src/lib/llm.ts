@@ -1,11 +1,11 @@
-import { createServerFn } from "@tanstack/react-start";
 import OpenAI from "openai";
 
-const API_KEY = process.env.VITE_NVIDIA_API_KEY || process.env.NVIDIA_API_KEY;
+const API_KEY = import.meta.env.VITE_NVIDIA_API_KEY;
 
 const openai = new OpenAI({
   baseURL: "https://integrate.api.nvidia.com/v1",
-  apiKey: API_KEY
+  apiKey: API_KEY,
+  dangerouslyAllowBrowser: true // This is a static Vite app, we run this on the client
 });
 
 export interface ChatMessage {
@@ -13,23 +13,21 @@ export interface ChatMessage {
   content: string;
 }
 
-export const generateCompletion = createServerFn({ method: "POST" })
-  .validator((messages: ChatMessage[]) => messages)
-  .handler(async ({ data: messages }) => {
-    try {
-      const completion = await openai.chat.completions.create({
-        model: "deepseek-ai/deepseek-v4-pro",
-        messages: messages as any,
-        temperature: 0.7,
-        max_tokens: 1024,
-      });
+export const generateCompletion = async (messages: ChatMessage[]) => {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "deepseek-ai/deepseek-v4-pro",
+      messages: messages as any,
+      temperature: 0.7,
+      max_tokens: 1024,
+    });
 
-      return completion.choices[0].message.content as string;
-    } catch (error) {
-      console.error("Failed to generate completion:", error);
-      throw error;
-    }
-  });
+    return completion.choices[0].message.content as string;
+  } catch (error) {
+    console.error("Failed to generate completion:", error);
+    throw error;
+  }
+};
 
 // AI Helper Functions
 

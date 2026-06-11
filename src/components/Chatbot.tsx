@@ -45,12 +45,12 @@ export function Chatbot() {
         <MessageCircle className="h-6 w-6" />
       </button>
 
-      <div className={`fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 w-[calc(100vw-2rem)] md:w-96 h-[500px] max-h-[75vh] glass rounded-2xl border border-white/10 shadow-elegant flex flex-col transition-all origin-bottom-right duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"}`}>
+      <div className={`fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 w-[calc(100vw-2rem)] md:w-96 h-[500px] max-h-[75vh] bg-slate-900 rounded-2xl border border-white/10 shadow-2xl flex flex-col transition-all origin-bottom-right duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"}`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/5 gradient-primary rounded-t-2xl">
           <div className="flex items-center gap-2 text-white">
             <Bot className="h-5 w-5" />
-            <h3 className="font-display font-bold">PRODEXA AI Coach</h3>
+            <h3 className="font-display font-bold text-white shadow-sm">PRODEXA AI Coach</h3>
           </div>
           <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
             <X className="h-5 w-5" />
