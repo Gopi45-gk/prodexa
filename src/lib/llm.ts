@@ -14,7 +14,7 @@ export const generateCompletion = async (messages: ChatMessage[]) => {
         "Authorization": `Bearer ${API_KEY}`
       },
       body: JSON.stringify({ 
-        model: "deepseek-ai/deepseek-r1",
+        model: "meta/llama-3.1-8b-instruct",
         messages,
         temperature: 0.7,
         max_tokens: 1024
