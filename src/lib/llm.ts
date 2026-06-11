@@ -1,13 +1,3 @@
-import OpenAI from "openai";
-
-const API_KEY = import.meta.env.VITE_NVIDIA_API_KEY;
-
-const openai = new OpenAI({
-  baseURL: "https://integrate.api.nvidia.com/v1",
-  apiKey: API_KEY,
-  dangerouslyAllowBrowser: true // This is a static Vite app, we run this on the client
-});
-
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
   content: string;
@@ -15,14 +5,26 @@ export interface ChatMessage {
 
 export const generateCompletion = async (messages: ChatMessage[]) => {
   try {
-    const completion = await openai.chat.completions.create({
-      model: "deepseek-ai/deepseek-v4-pro",
-      messages: messages as any,
-      temperature: 0.7,
-      max_tokens: 1024,
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ messages })
     });
 
-    return completion.choices[0].message.content as string;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      return data.choices[0].message.content as string;
+    } else {
+      throw new Error("Invalid response format from API");
+    }
   } catch (error) {
     console.error("Failed to generate completion:", error);
     throw error;
